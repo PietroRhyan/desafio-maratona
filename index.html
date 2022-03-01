@@ -30,7 +30,7 @@
           <span>Entradas</span>
           <img src="./assets/income.svg" alt="Imagem de entradas">
         </h3>
-        <p id="incomeDisplay">R$ 5.000,00</p>
+        <p id="incomeDisplay">R$ 0,00</p>
       </div>
 
       <div class='cards'>
@@ -38,7 +38,7 @@
           <span>Saídas</span> 
           <img src="./assets/expense.svg" alt="Imagem de saídas">
         </h3>
-        <p id="expenseDisplay">R$ 5.000,00</p>
+        <p id="expenseDisplay">R$ 0,00</p>
       </div>
 
       <div class='cards total'>
@@ -46,7 +46,7 @@
           <span>Total</span>
           <img src="./assets/total.svg" alt="Imagem de total"> 
         </h3>
-        <p id='totalDisplay'>R$ 5.000,00</p>
+        <p id='totalDisplay'>R$ 0,00</p>
       </div>
     </section>
     
@@ -77,7 +77,7 @@
     <div class="modal">
       <div id="form">
         <h2>Nova Transação</h2>
-        <form action="">
+        <form action="" onsubmit="Form.submit(event)">
           <div class="input-group">
             <label for="description" class="sr-only">Descrição</label>
             <input type="text" name="description" id="description" placeholder="Descrição">

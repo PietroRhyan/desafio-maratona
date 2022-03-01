@@ -9,32 +9,26 @@ const Modal = {
   }
 }
 
-const transactionsData = [
-  {
-    id: 1,
-    description: 'Luz',
-    amount: 23400,
-    date: '23/01/2022',
+const Storage = {
+  get() {
+    return JSON.parse(localStorage.getItem('dev.finances:transactions')) || []
   },
-  {
-    id: 2,
-    description: 'Website',
-    amount: 50000,
-    date: '02/01/2022',
-  },
-  {
-    id: 3,
-    description: 'Internet',
-    amount: -8000,
-    date: '15/01/2022',
+  set(transactions) {
+    localStorage.setItem('dev.finances:transactios', JSON.stringify(transactions))
   }
-]  
+}
 
 const Transactions = {
-  all: transactionsData,
+  all: Storage.get(),
 
   add(transaction) {
     Transactions.all.push(transaction)
+
+    App.reload()
+  },
+
+  remove(index) {
+    Transactions.all.splice(index, 1)
 
     App.reload()
   },
@@ -68,6 +62,19 @@ const Transactions = {
 }
 
 const Utils = {
+  formatAmount(value) {
+    value = Number(value.replace(/\,\./g, '')) * 100
+
+    return value
+  },
+
+  formatDate(date) {
+    // Separando as informações da Data em AAAA-MM-DD
+    const splittedDate = date.split('-')
+
+    return `${splittedDate[2]}/${splittedDate[1]}/${splittedDate[0]}`
+  },
+
   formatCurrency(value) {
     const signal = Number(value) < 0 ? '-' : ''
     value = String(value).replace(/\D/g, '')
@@ -90,11 +97,13 @@ const DOM = {
     const tr = document.createElement('tr')
     tr.innerHTML = DOM.innerHTMLTransaction(transaction)
 
+    tr.dataset.index = index
+
     DOM.transactionContainer.appendChild(tr)
 
   },
 
-  innerHTMLTransaction(transaction) {
+  innerHTMLTransaction(transaction, index) {
     const CSSclass = transaction.amount > 0 ? 'income' : 'expense'
 
     const amount = Utils.formatCurrency(transaction.amount)
@@ -104,7 +113,7 @@ const DOM = {
       <td class='${CSSclass}'>${amount}</td>
       <td class='date'>${transaction.date}</td>
       <td>
-        <img src="./assets/minus.svg" alt="Remoção de transação">
+        <img onclick='Transactions.remove(${index})' src="./assets/minus.svg" alt="Remoção de transação">
       </td>
     `
 
@@ -122,14 +131,81 @@ const DOM = {
   }
 }
 
+const Form = {
+  description: document.querySelector('input#description'),
+  amount: document.querySelector('input#amount'),
+  date: document.querySelector('input#date'),
+
+  getValues() {
+    return {
+      description: Form.description.value,
+      amount: Form.amount.value,
+      date: Form.date.value
+    }
+  },
+
+  formatData() {
+    let {description, amount, date} = Form.getValues()
+
+    amount = Utils.formatAmount(amount)
+
+    date = Utils.formatDate(date)
+
+    return {
+      description,
+      amount,
+      date
+    }
+  },
+  
+  validateFields() {
+    const {description, amount, date} = Form.getValues()
+    
+    // Validando se há algum campo vazio
+    if (description.trim() === '' || amount.trim() === '' || date.trim() === ''){
+      throw new Error('Por favor, preencha todos os campos.')
+    }
+  },
+
+  saveTransacton(transaction) {
+    Transactions.add(transaction)
+  },
+
+  clearFields() { 
+    Form.description.value = ''
+    Form.amount.value = ''
+    Form.date.value = ''
+  },
+
+  submit(event) {
+    // Interrompendo comportamento padrão
+    event.preventDefault()
+
+    try {
+      Form.validateFields()
+      const transaction = Form.formatData()
+      Form.saveTransacton(transaction)
+
+      Form.clearFields()
+
+      Modal.close()
+
+    } catch (error) {
+      alert(error.message)
+    }
+  }
+}
+
 const App = {
   init() {
 
-    Transactions.all.forEach(transaction => {
-      DOM.addTransaction(transaction)
+    Transactions.all.forEach((transaction, index) => {
+      DOM.addTransaction(transaction, index)
     })
 
     DOM.updateBalance()
+
+    Storage.set(Transactions.all)
 
   },
   reload() {
@@ -139,13 +215,3 @@ const App = {
 }
 
 App.init()
-
-Transactions.add({
-  id: 39,
-  description: 'Alô',
-  amount: 200,
-  date: '23/01/2021'
-})
-
-
-

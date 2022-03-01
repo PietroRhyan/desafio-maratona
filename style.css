@@ -181,6 +181,10 @@ table tbody tr:hover {
   opacity: 1;
 }
 
+table tbody td img {
+  cursor: pointer;
+}
+
 table td {
   background: #FFF;
 
@@ -243,7 +247,7 @@ td.expense {
   z-index: 1;
 }
 
-/* Form __--------------------------------- */
+/* Form ----------------------------------- */
 
 #form {
   max-width: 500px;
