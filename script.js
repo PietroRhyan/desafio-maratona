@@ -1,5 +1,4 @@
-// Funcionalidades do Modal
-
+// Funcionalidades do modal
 const Modal = {
   open(){
     document.querySelector('.modal-overlay').classList.add('active')
@@ -9,6 +8,7 @@ const Modal = {
   }
 }
 
+// Funcionalidades de armazenamento de dadoss
 const Storage = {
   get() {
     return JSON.parse(localStorage.getItem('dev.finances:transactions')) || []
@@ -18,6 +18,7 @@ const Storage = {
   }
 }
 
+// Funcionalidades das transações
 const Transactions = {
   all: Storage.get(),
 
@@ -48,7 +49,7 @@ const Transactions = {
   expenses() {
     let expense = 0
 
-    Transactions.all.forEach(function(transaction) {
+    Transactions.all.forEach(transaction => {
       if (transaction.amount < 0) {
         expense += transaction.amount
       }
@@ -61,6 +62,7 @@ const Transactions = {
   }
 }
 
+// Funcionalidades úteis (formatação de dados)
 const Utils = {
   formatAmount(value) {
     value = value * 100
@@ -77,6 +79,7 @@ const Utils = {
 
   formatCurrency(value) {
     const signal = Number(value) < 0 ? '-' : ''
+
     value = String(value).replace(/\D/g, '')
 
     value = Number(value) / 100
@@ -90,6 +93,7 @@ const Utils = {
   }
 }
 
+// Funcionalidades referentes a DOM
 const DOM = {
   transactionContainer: document.querySelector('#data-table tbody'),
 
@@ -126,11 +130,12 @@ const DOM = {
     document.getElementById('totalDisplay').innerHTML = Utils.formatCurrency(Transactions.total())
   },
 
-  clearTransections() {
+  clearTransactions() {
     DOM.transactionContainer.innerHTML = ''
   }
 }
 
+// Funcionalidades referentes ao formulário
 const Form = {
   description: document.querySelector('input#description'),
   amount: document.querySelector('input#amount'),
@@ -167,7 +172,7 @@ const Form = {
     }
   },
 
-  saveTransacton(transaction) {
+  saveTransaction(transaction) {
     Transactions.add(transaction)
   },
 
@@ -184,7 +189,7 @@ const Form = {
     try {
       Form.validateFields()
       const transaction = Form.formatData()
-      Form.saveTransacton(transaction)
+      Form.saveTransaction(transaction)
 
       Form.clearFields()
 
@@ -196,6 +201,7 @@ const Form = {
   }
 }
 
+// Funcionalidades de inicialização e recarregamento da página
 const App = {
   init() {
 
@@ -209,7 +215,7 @@ const App = {
 
   },
   reload() {
-    DOM.clearTransections()
+    DOM.clearTransactions()
     App.init()
   }
 }
