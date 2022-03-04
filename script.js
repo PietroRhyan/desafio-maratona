@@ -3,6 +3,7 @@ const Modal = {
   open(){
     document.querySelector('.modal-overlay').classList.add('active')
   },
+
   close(){
     document.querySelector('.modal-overlay').classList.remove('active')
   }
@@ -13,8 +14,9 @@ const Storage = {
   get() {
     return JSON.parse(localStorage.getItem('dev.finances:transactions')) || []
   },
+
   set(transactions) {
-    localStorage.setItem('dev.finances:transactios', JSON.stringify(transactions))
+    localStorage.setItem('dev.finances:transactions', JSON.stringify(transactions))
   }
 }
 
@@ -130,6 +132,19 @@ const DOM = {
     document.getElementById('totalDisplay').innerHTML = Utils.formatCurrency(Transactions.total())
   },
 
+  totalCollorChange() {
+    const totalDisplay = document.querySelector('.total')
+    const totalValue = Transactions.total()
+
+    if (totalValue < 0){
+      totalDisplay.classList.add('bg-red')
+    }
+
+    if (totalValue >= 0 && totalDisplay.className == 'cards total bg-red' ) {
+      totalDisplay.classList.remove('bg-red')
+    }
+  },
+
   clearTransactions() {
     DOM.transactionContainer.innerHTML = ''
   }
@@ -210,10 +225,12 @@ const App = {
     })
 
     DOM.updateBalance()
+    DOM.totalCollorChange()
 
     Storage.set(Transactions.all)
 
   },
+  
   reload() {
     DOM.clearTransactions()
     App.init()
